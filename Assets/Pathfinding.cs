@@ -7,6 +7,7 @@ public class Pathfinding : MonoBehaviour
     private List<Vector2Int> path = new List<Vector2Int>();
     public Vector2Int start = new Vector2Int(0, 1);
     public Vector2Int goal = new Vector2Int(4, 4);
+    public Vector2Int[] presetObstacles;
     private Vector2Int next;
     private Vector2Int current;
     public int width = 5;
@@ -21,16 +22,9 @@ public class Pathfinding : MonoBehaviour
         new Vector2Int(0, -1)
     };
 
-    private int[,] grid;
-    /*{
-        { 0, 1, 0, 0, 0 },
-        { 0, 1, 0, 1, 0 },
-        { 0, 0, 0, 1, 0 },
-        { 0, 1, 1, 1, 0 },
-        { 0, 0, 0, 0, 0 }
-    };*/
+    public int[,] grid = new int[5, 5];
 
-    private void GenerateRandomGrid(int width, int height, float obstacleProbablity)
+    public void GenerateRandomGrid(int width, int height, float obstacleProbablity)
     {
         int obstacleTotal = (int)((width * height) * obstacleProbablity);
         int obstacleCount = 0;
@@ -49,13 +43,30 @@ public class Pathfinding : MonoBehaviour
                     }
                 }
                 grid[i, j] = number;
-            }        
+            }
         }
+    }
+
+    public void AddObstacles(Vector2Int[] obstacleArray)
+    {
+        if (obstacleArray.Length > 0)
+        {
+            foreach (Vector2Int obstacle in obstacleArray)
+            {
+                grid[obstacle.y, obstacle.x] = 1;
+            }
+
+        }
+        else
+        {
+            Debug.Log("No Obstacle Array");
+        }       
     }
 
     private void Start()
     {
         GenerateRandomGrid(width, height, obstacleProbablity);
+        AddObstacles(presetObstacles);
         FindPath(start, goal);
     }
 
